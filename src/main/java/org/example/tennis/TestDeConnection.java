@@ -19,13 +19,6 @@ public class TestDeConnection {
             dataSource.setPassword("F@bien");
             conn = dataSource.getConnection();
 
-
-            //Seulement avant Java 7/JDBC 4
-            //Class.forName(DRIVER_CLASS_NAME);
-
-            //MySQL driver MySQL Connector
-            // conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/tennis?useSSL=false&useLegacyDatetimeCode=false&serverTimezone=Europe/Paris","root","F@bien");
-
             conn.setAutoCommit(false);
 
             PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO JOUEUR (PRENOM, NOM, SEXE) VALUES (?, ?, ?)");
@@ -38,24 +31,9 @@ public class TestDeConnection {
 
             preparedStatement.executeUpdate();
 
-            prenom = "Thomas";
-            nom = "Johanson";
-            sexe = "H";
-            preparedStatement.setString(1, prenom);
-            preparedStatement.setString(2, nom);
-            preparedStatement.setString(3, sexe);
-
-            preparedStatement.executeUpdate();
-
-            conn.commit();
-
             Statement statement = conn.createStatement();
 
-            //Oracle Driver officiel OJDBC Thin
-            //conn = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:tennis","COURSDB","COURSDB");
-            //Postgres Driver officiel
-            //conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/tennis","COURSDB","COURSDB");
-            System.out.println("success");
+            System.out.println("Joueur créé !");
 
         } catch (SQLException e) {
             e.printStackTrace();
