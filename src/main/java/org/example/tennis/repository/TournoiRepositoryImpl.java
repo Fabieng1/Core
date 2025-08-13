@@ -3,15 +3,16 @@ package org.example.tennis.repository;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.example.tennis.DataSourceProvider;
 import org.example.tennis.entity.Joueur;
+import org.example.tennis.entity.Tournoi;
 
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JoueurRepositoryImpl {
+public class TournoiRepositoryImpl {
 
-    public void createPlayer (Joueur joueur) {
+    public void createTournoi (Tournoi tournoi) {
 
         Connection conn = null;
         try {
@@ -21,24 +22,24 @@ public class JoueurRepositoryImpl {
 
             conn.setAutoCommit(false);
 
-            PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO JOUEUR (PRENOM, NOM, SEXE) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(1, joueur.getPrenom());
-            preparedStatement.setString(2, joueur.getNom());
-            preparedStatement.setString(3, joueur.getSexe().toString());
+            PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO TOURNOI (NOM, CODE) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+
+            preparedStatement.setString(2, tournoi.getNom());
+            preparedStatement.setString(3, tournoi.getCode());
 
             preparedStatement.executeUpdate();
 
             ResultSet rs = preparedStatement.getGeneratedKeys();
 
             if(rs.next()) {
-                joueur.setId(rs.getLong(1));
+                tournoi.setId(rs.getLong(1));
             }
 
             conn.commit();
 
             Statement statement = conn.createStatement();
 
-            System.out.println("Joueur créé !");
+            System.out.println("Tournoi créé !");
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -59,10 +60,9 @@ public class JoueurRepositoryImpl {
                 e.printStackTrace();
             }
         }
-
     }
 
-    public void updatePlayer (Joueur joueur) {
+    public void updatePlayer (Tournoi tournoi) {
 
         Connection conn = null;
 
@@ -73,11 +73,10 @@ public class JoueurRepositoryImpl {
 
             conn.setAutoCommit(false);
 
-            PreparedStatement preparedStatement = conn.prepareStatement("UPDATE JOUEUR SET PRENOM = ?, NOM = ?, SEXE = ? WHERE ID = ?");
-            preparedStatement.setString(1, joueur.getPrenom());
-            preparedStatement.setString(2, joueur.getNom());
-            preparedStatement.setString(3, joueur.getSexe().toString());
-            preparedStatement.setLong(4, joueur.getId());
+            PreparedStatement preparedStatement = conn.prepareStatement("UPDATE TOURNOI SET NOM = ?, CODE = ? WHERE ID = ?");
+            preparedStatement.setString(1, tournoi.getNom());
+            preparedStatement.setString(2, tournoi.getCode());
+            preparedStatement.setLong(3, tournoi.getId());
 
             preparedStatement.executeUpdate();
 
@@ -85,7 +84,7 @@ public class JoueurRepositoryImpl {
 
             Statement statement = conn.createStatement();
 
-            System.out.println("Joueur modifié !");
+            System.out.println("Tournoi modifié !");
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -119,7 +118,7 @@ public class JoueurRepositoryImpl {
             conn.setAutoCommit(false);
 
 
-            PreparedStatement preparedStatement = conn.prepareStatement("DELETE FROM JOUEUR WHERE ID = ?");
+            PreparedStatement preparedStatement = conn.prepareStatement("DELETE FROM TOURNOI WHERE ID = ?");
             preparedStatement.setLong(1, id);
 
             preparedStatement.executeUpdate();
@@ -128,7 +127,7 @@ public class JoueurRepositoryImpl {
 
             Statement statement = conn.createStatement();
 
-            System.out.println("Joueur supprimé ! !");
+            System.out.println("Tournoi supprimé ! !");
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -152,10 +151,10 @@ public class JoueurRepositoryImpl {
 
     }
 
-    public Joueur getById (Long id) {
+    public Tournoi getById (Long id) {
 
         Connection conn = null;
-        Joueur joueur = null;
+        Tournoi tournoi = null;
 
         try {
 
@@ -164,26 +163,25 @@ public class JoueurRepositoryImpl {
 
             conn.setAutoCommit(false);
 
-            PreparedStatement preparedStatement = conn.prepareStatement("SELECT PRENOM, NOM, SEXE FROM JOUEUR WHERE ID = ?");
+            PreparedStatement preparedStatement = conn.prepareStatement("SELECT NOM, CODE FROM TOURNOI WHERE ID = ?");
             preparedStatement.setLong(1, id);
 
             ResultSet rs = preparedStatement.executeQuery();
 
             if (rs.next()) {
 
-                joueur = new Joueur();
+                tournoi = new Tournoi();
 
-                joueur.setId(id);
-                joueur.setPrenom(rs.getString("PRENOM"));
-                joueur.setNom(rs.getString("NOM"));
-                joueur.setSexe(rs.getString("SEXE").charAt(0));
+                tournoi.setId(id);
+                tournoi.setNom(rs.getString("NOM"));
+                tournoi.setCode(rs.getString("CODE"));
             }
 
             conn.commit();
 
             Statement statement = conn.createStatement();
 
-            System.out.println("Joueur lu !");
+            System.out.println("Tournoi lu !");
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -204,13 +202,13 @@ public class JoueurRepositoryImpl {
             }
         }
 
-        return joueur;
+        return tournoi;
     }
 
-    public List<Joueur> listPlayer() {
+    public List<Tournoi> listTournoi() {
 
         Connection conn = null;
-        List<Joueur> listJoueurs = new ArrayList<>();
+        List<Tournoi> listTournoi = new ArrayList<>();
 
         try {
 
@@ -219,19 +217,18 @@ public class JoueurRepositoryImpl {
 
             conn.setAutoCommit(false);
 
-            PreparedStatement preparedStatement = conn.prepareStatement("SELECT ID, PRENOM, NOM, SEXE FROM JOUEUR");
+            PreparedStatement preparedStatement = conn.prepareStatement("SELECT ID, NOM, CODE FROM TOURNOI");
 
             ResultSet rs = preparedStatement.executeQuery();
 
             while (rs.next()) {
 
-                Joueur joueur = new Joueur();
+                Tournoi tournoi = new Tournoi();
 
-                joueur.setId(rs.getLong("ID"));
-                joueur.setPrenom(rs.getString("PRENOM"));
-                joueur.setNom(rs.getString("NOM"));
-                joueur.setSexe(rs.getString("SEXE").charAt(0));
-                listJoueurs.add(joueur);
+                tournoi.setId(rs.getLong("ID"));
+                tournoi.setNom(rs.getString("NOM"));
+                tournoi.setCode(rs.getString("CODE"));
+                listTournoi.add(tournoi);
             }
 
             conn.commit();
@@ -259,6 +256,6 @@ public class JoueurRepositoryImpl {
             }
         }
 
-        return listJoueurs;
+        return listTournoi;
     }
 }

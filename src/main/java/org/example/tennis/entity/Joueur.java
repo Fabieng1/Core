@@ -38,4 +38,9 @@ public class Joueur {
     public String getNom() {
         return nom;
     }
+
+    @Override
+    public String toString() {
+        return prenom + " " + nom + " identifiant n° " + id;
+    }
 }

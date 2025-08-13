@@ -2,57 +2,30 @@ package org.example.tennis;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.example.tennis.entity.Joueur;
+import org.example.tennis.entity.Match;
+import org.example.tennis.entity.Score;
+import org.example.tennis.entity.Tournoi;
+import org.example.tennis.repository.JoueurRepositoryImpl;
+import org.example.tennis.repository.TournoiRepositoryImpl;
+import org.example.tennis.services.JoueursServices;
+import org.example.tennis.services.MatchServices;
 
+import java.awt.*;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TestDeConnection {
 
     public static void main (String[] args) {
+        MatchServices matchServices = new MatchServices();
+        Match match = new Match();
+        Score score = new Score();
+        score.setSet1((byte)3);
+        score.setSet2((byte)4);
+        score.setSet3((byte)6);
+        System.out.println("Match : " + match.getId());
 
-        Connection conn = null;
-        try {
-
-            BasicDataSource dataSource = new BasicDataSource();
-            dataSource.setInitialSize(5);
-            dataSource.setUrl("jdbc:mysql://localhost:3306/tennis?useSSL=false&useLegacyDatetimeCode=false&serverTimezone=Europe/Paris");
-            dataSource.setUsername("root");
-            dataSource.setPassword("F@bien");
-            conn = dataSource.getConnection();
-
-            conn.setAutoCommit(false);
-
-            PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO JOUEUR (PRENOM, NOM, SEXE) VALUES (?, ?, ?)");
-            String prenom = "Jenifer";
-            String nom = "Capriati";
-            String sexe = "F";
-            preparedStatement.setString(1, prenom);
-            preparedStatement.setString(2, nom);
-            preparedStatement.setString(3, sexe);
-
-            preparedStatement.executeUpdate();
-
-            Statement statement = conn.createStatement();
-
-            System.out.println("Joueur créé !");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            try {
-                if (conn != null) {
-                    conn.rollback();
-                }
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-        finally {
-            try {
-                if (conn!=null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
