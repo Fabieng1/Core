@@ -21,12 +21,28 @@ public class ScoreRepositoryImpl {
 
             conn.setAutoCommit(false);
 
-            PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO SCORE VAINQUEUR (ID MATCH, SET_1, SET_2, SET_3, SET_4, SET_5) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setByte(1, score.getSet1());
-            preparedStatement.setByte(2, score.getSet2());
-            preparedStatement.setByte(3, score.getSet3());
-            preparedStatement.setByte(4, score.getSet4());
-            preparedStatement.setByte(5, score.getSet5());
+            PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO SCORE_VAINQUEUR (ID_MaTCH, SET_1, SET_2, SET_3, SET_4, SET_5) VALUES (?, ?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setLong(1, score.getMatch().getId());
+            preparedStatement.setByte(2, score.getSet1());
+            preparedStatement.setByte(3, score.getSet2());
+            if (score.getSet3() == null) {
+                preparedStatement.setNull(4, Types.TINYINT);
+            }
+            else {
+                preparedStatement.setByte(4, score.getSet3());
+            }
+            if (score.getSet4() == null) {
+                preparedStatement.setNull(5, Types.TINYINT);
+            }
+            else {
+                preparedStatement.setByte(5, score.getSet4());
+            }
+            if (score.getSet5() == null) {
+                preparedStatement.setNull(6, Types.TINYINT);
+            }
+            else {
+                preparedStatement.setByte(6, score.getSet5());
+            }
 
             preparedStatement.executeUpdate();
 

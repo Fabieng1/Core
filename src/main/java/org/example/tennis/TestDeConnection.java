@@ -2,10 +2,7 @@ package org.example.tennis;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.example.tennis.entity.Joueur;
-import org.example.tennis.entity.Match;
-import org.example.tennis.entity.Score;
-import org.example.tennis.entity.Tournoi;
+import org.example.tennis.entity.*;
 import org.example.tennis.repository.JoueurRepositoryImpl;
 import org.example.tennis.repository.TournoiRepositoryImpl;
 import org.example.tennis.services.JoueursServices;
@@ -25,7 +22,24 @@ public class TestDeConnection {
         score.setSet1((byte)3);
         score.setSet2((byte)4);
         score.setSet3((byte)6);
-        System.out.println("Match : " + match.getId());
+        match.setScore(score);
+        score.setMatch(match);
 
+        Joueur federer = new Joueur();
+        federer.setId(32L);
+
+        Joueur murray = new Joueur();
+        murray.setId(34L);
+
+        match.setVainqueur(federer);
+        match.setFinaliste(murray);
+
+        Epreuve epreuve = new Epreuve();
+        epreuve.setId(9L);
+        match.setEpreuve(epreuve);
+
+        matchServices.enregistrezVosMatch(match);
+
+        System.out.println(match.getId());
     }
 }

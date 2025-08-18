@@ -1,8 +1,6 @@
 package org.example.tennis.repository;
 
-import org.apache.commons.dbcp2.BasicDataSource;
 import org.example.tennis.DataSourceProvider;
-import org.example.tennis.entity.Joueur;
 import org.example.tennis.entity.Tournoi;
 
 import javax.sql.DataSource;
@@ -12,7 +10,7 @@ import java.util.List;
 
 public class TournoiRepositoryImpl {
 
-    public void createTournoi (Tournoi tournoi) {
+    public Tournoi createTournoi (Tournoi tournoi) {
 
         Connection conn = null;
         try {
@@ -60,6 +58,7 @@ public class TournoiRepositoryImpl {
                 e.printStackTrace();
             }
         }
+        return tournoi;
     }
 
     public void updatePlayer (Tournoi tournoi) {
