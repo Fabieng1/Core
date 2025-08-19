@@ -22,8 +22,8 @@ public class TournoiRepositoryImpl {
 
             PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO TOURNOI (NOM, CODE) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
 
-            preparedStatement.setString(2, tournoi.getNom());
-            preparedStatement.setString(3, tournoi.getCode());
+            preparedStatement.setString(1, tournoi.getNom());
+            preparedStatement.setString(2, tournoi.getCode());
 
             preparedStatement.executeUpdate();
 
