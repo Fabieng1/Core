@@ -1,7 +1,11 @@
 package org.example.tennis.repository;
 
 import org.example.tennis.DataSourceProvider;
+import org.example.tennis.HibernateUtil;
+import org.example.tennis.entity.Joueur;
 import org.example.tennis.entity.Tournoi;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -12,50 +16,26 @@ public class TournoiRepositoryImpl {
 
     public Tournoi createTournoi (Tournoi tournoi) {
 
-        Connection conn = null;
+        Session session = null;
+        Transaction tx = null;
+
         try {
 
-            DataSource dataSource = DataSourceProvider.getSingleDataSourceInstance();
-            conn = dataSource.getConnection();
-
-            conn.setAutoCommit(false);
-
-            PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO TOURNOI (NOM, CODE) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
-
-            preparedStatement.setString(1, tournoi.getNom());
-            preparedStatement.setString(2, tournoi.getCode());
-
-            preparedStatement.executeUpdate();
-
-            ResultSet rs = preparedStatement.getGeneratedKeys();
-
-            if(rs.next()) {
-                tournoi.setId(rs.getLong(1));
-            }
-
-            conn.commit();
-
-            Statement statement = conn.createStatement();
+            session = HibernateUtil.getSessionFactory().openSession();
+            tx = session.beginTransaction();
+            session.persist(tournoi);
+            tx.commit();
 
             System.out.println("Tournoi créé !");
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-            try {
-                if (conn != null) {
-                    conn.rollback();
-                }
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
+        } catch (Throwable t) {
+            if (tx != null) {
+                tx.rollback();
             }
-        }
-        finally {
-            try {
-                if (conn!=null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            t.printStackTrace();
+        } finally {
+            if (session != null) {
+                session.close();
             }
         }
         return tournoi;
@@ -154,52 +134,24 @@ public class TournoiRepositoryImpl {
 
         Connection conn = null;
         Tournoi tournoi = null;
+        Session session = null;
 
         try {
 
-            DataSource dataSource = DataSourceProvider.getSingleDataSourceInstance();
-            conn = dataSource.getConnection();
-
-            conn.setAutoCommit(false);
-
-            PreparedStatement preparedStatement = conn.prepareStatement("SELECT NOM, CODE FROM TOURNOI WHERE ID = ?");
-            preparedStatement.setLong(1, id);
-
-            ResultSet rs = preparedStatement.executeQuery();
-
-            if (rs.next()) {
-
-                tournoi = new Tournoi();
-
-                tournoi.setId(id);
-                tournoi.setNom(rs.getString("NOM"));
-                tournoi.setCode(rs.getString("CODE"));
-            }
-
-            conn.commit();
-
-            Statement statement = conn.createStatement();
-
+            session = HibernateUtil.getSessionFactory().openSession();
+            tournoi = session.get(Tournoi.class, id);
             System.out.println("Tournoi lu !");
+        }
+        catch (Throwable t) {
+            t.printStackTrace();
+        }
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-            try {
-                if (conn != null) {
-                    conn.rollback();
-                }
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
-        } finally {
-            try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+        finally {
+            if (session != null) {
+                session.close();
             }
         }
+
 
         return tournoi;
     }

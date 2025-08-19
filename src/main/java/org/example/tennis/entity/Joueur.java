@@ -1,11 +1,38 @@
 package org.example.tennis.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
+import java.util.Objects;
+
+@Entity
+
 public class Joueur {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String prenom;
     private String nom;
     private Character sexe;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof  Joueur)) {
+            return false;
+        }
+        Joueur joueur = (Joueur) o;
+        return Objects.equals(id, joueur.id) && Objects.equals(nom, joueur.nom) && Objects.equals(prenom, joueur.prenom) && Objects.equals(sexe, joueur.sexe);
+    }
+
+    public int hashCode() {
+        return Objects.hash(id, nom, prenom, nom, sexe);
+    }
 
     public void setId(Long id) {
         this.id = id;

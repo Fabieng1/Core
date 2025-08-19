@@ -1,5 +1,8 @@
 package org.example.tennis.entity;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+
 public class Match {
 
     private long id;
