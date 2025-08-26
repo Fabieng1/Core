@@ -1,8 +1,12 @@
 package org.example.tennis.repository;
 
 import org.example.tennis.DataSourceProvider;
+import org.example.tennis.HibernateUtil;
+import org.example.tennis.dto.MatchDto;
+import org.example.tennis.entity.Epreuve;
 import org.example.tennis.entity.Joueur;
 import org.example.tennis.entity.Match;
+import org.hibernate.Session;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -59,6 +63,14 @@ public class MatchRepositoryImpl {
                 e.printStackTrace();
             }
         }
+    }
 
+    public Match getById (Long id) {
+
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Match match = session.get(Match.class, id);
+        System.out.println("Match lu !");
+
+        return match;
     }
 }

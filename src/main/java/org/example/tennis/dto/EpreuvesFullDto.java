@@ -1,22 +1,14 @@
-package org.example.tennis.entity;
+package org.example.tennis.dto;
 
-import jakarta.persistence.*;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.Type;
+import org.example.tennis.entity.Tournoi;
 
-@Entity
-public class Epreuve {
+public class EpreuvesFullDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Short annee;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ID_TOURNOI")
-    private Tournoi tournoi;
+    private TournoiDto tournoiDto;
 
-    @Column(name = "TYPE_EPREUVE")
     private Character typeEpreuve;
 
     public Character getTypeEpreuve() {
@@ -43,11 +35,11 @@ public class Epreuve {
         this.annee = annee;
     }
 
-    public Tournoi getTournoi() {
-        return tournoi;
+    public TournoiDto getTournoiDto() {
+        return tournoiDto;
     }
 
-    public void setTournoi(Tournoi tournoi) {
-        this.tournoi = tournoi;
+    public void setTournoiDto(TournoiDto tournoiDto) {
+        this.tournoiDto = tournoiDto;
     }
 }

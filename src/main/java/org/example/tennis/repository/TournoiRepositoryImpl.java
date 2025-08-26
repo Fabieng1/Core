@@ -2,8 +2,10 @@ package org.example.tennis.repository;
 
 import org.example.tennis.DataSourceProvider;
 import org.example.tennis.HibernateUtil;
+import org.example.tennis.entity.Epreuve;
 import org.example.tennis.entity.Joueur;
 import org.example.tennis.entity.Tournoi;
+import org.example.tennis.services.TournoisServices;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -13,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TournoiRepositoryImpl {
+
+    private TournoiRepositoryImpl tournoiRepository;
 
     public Tournoi createTournoi (Tournoi tournoi) {
 
@@ -87,71 +91,20 @@ public class TournoiRepositoryImpl {
 
     }
 
-    public void deletePlayer (Long id) {
+    public void delete(Long id) {
+        Tournoi tournoi = new Tournoi();
+        tournoi.setId(id);
 
-        Connection conn = null;
-        try {
-            DataSource dataSource = DataSourceProvider.getSingleDataSourceInstance();
-            conn = dataSource.getConnection();
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 
-            conn.setAutoCommit(false);
-
-
-            PreparedStatement preparedStatement = conn.prepareStatement("DELETE FROM TOURNOI WHERE ID = ?");
-            preparedStatement.setLong(1, id);
-
-            preparedStatement.executeUpdate();
-
-            conn.commit();
-
-            Statement statement = conn.createStatement();
-
-            System.out.println("Tournoi supprimé ! !");
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            try {
-                if (conn != null) {
-                    conn.rollback();
-                }
-            } catch (SQLException ex) {
-                throw new RuntimeException(ex);
-            }
-        }
-        finally {
-            try {
-                if (conn!=null) {
-                    conn.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
-
+        session.delete(tournoi);
     }
 
     public Tournoi getById (Long id) {
 
-        Connection conn = null;
-        Tournoi tournoi = null;
-        Session session = null;
-
-        try {
-
-            session = HibernateUtil.getSessionFactory().openSession();
-            tournoi = session.get(Tournoi.class, id);
-            System.out.println("Tournoi lu !");
-        }
-        catch (Throwable t) {
-            t.printStackTrace();
-        }
-
-        finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Tournoi tournoi = session.get(Tournoi.class, id);
+        System.out.println("Tournoi lu !");
 
         return tournoi;
     }
@@ -209,4 +162,6 @@ public class TournoiRepositoryImpl {
 
         return listTournoi;
     }
+
+
 }

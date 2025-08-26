@@ -1,16 +1,46 @@
 package org.example.tennis.services;
 
+import org.example.tennis.HibernateUtil;
+import org.example.tennis.dto.TournoiDto;
 import org.example.tennis.entity.Joueur;
 import org.example.tennis.entity.Tournoi;
 import org.example.tennis.repository.TournoiRepositoryImpl;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 public class TournoisServices {
 
-    public Tournoi getPlayer(Long id) {
+    private TournoiRepositoryImpl tournoiRepository;
 
-        TournoiRepositoryImpl tournoiRepository = new TournoiRepositoryImpl();
+    public TournoisServices() {
+        this.tournoiRepository = new TournoiRepositoryImpl();
+    }
 
-        return tournoiRepository.getById(id);
+    public TournoiDto getTournoi(Long id) {
+
+        Session session = null;
+        Transaction tx = null;
+        Tournoi tournoi = null;
+        TournoiDto tournoiDto = null;
+
+        try {
+
+            session = HibernateUtil.getSessionFactory().getCurrentSession();
+            tx = session.beginTransaction();
+            tournoi = tournoiRepository.getById(id);
+            tournoiDto = new TournoiDto();
+            tournoiDto.setId(tournoi.getId());
+            tournoiDto.setCode(tournoi.getCode());
+            tournoiDto.setNom(tournoi.getNom());
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+        }
+
+        return tournoiDto;
     }
 
     public Tournoi getTournois(Long id) {
@@ -19,13 +49,58 @@ public class TournoisServices {
         return tournoiRepository.getById(id);
     }
 
-    public Tournoi createTournoi(Tournoi tournoi) {
-        TournoiRepositoryImpl tournoiRepository = new TournoiRepositoryImpl();
+    public void createTournoi(TournoiDto tournoiDto) {
+        Session session = null;
+        Transaction tx = null;
 
-        return tournoiRepository.createTournoi(tournoi);
+        try {
+
+            session = HibernateUtil.getSessionFactory().openSession();
+            tx = session.beginTransaction();
+            Tournoi tournoi = new Tournoi();
+            tournoi.setId(tournoiDto.getId());
+            tournoi.setCode(tournoiDto.getCode());
+            tournoi.setNom(tournoiDto.getNom());
+            session.persist(tournoi);
+            tx.commit();
+
+            System.out.println("Tournoi créé !");
+
+        } catch (Throwable t) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            t.printStackTrace();
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
+    }
+
+    public void deleteTournoi(Long id) {
+
+        Session session = null;
+        Transaction tx = null;
+
+        try {
+            session = HibernateUtil.getSessionFactory().getCurrentSession();
+            tx = session.beginTransaction();
+
+            tournoiRepository.delete(id);
+            tx.commit();
+        }
+        catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        }
+        finally {
+            if (session != null) {
+                session.close();
+            }
+        }
     }
 }
-
-
-
 

@@ -37,7 +37,9 @@
 		<!-- Enities to map -->
         <mapping class="org.example.tennis.entity.Joueur" />
         <mapping class="org.example.tennis.entity.Tournoi" />
-		<!-- mapping class="com.mycompany.tennis.core.entity.Tournoi" /-->
+        <mapping class="org.example.tennis.entity.Epreuve" />
+        <mapping class="org.example.tennis.entity.Score" />
+        <mapping class="org.example.tennis.entity.Match" />
 
     </session-factory>
 

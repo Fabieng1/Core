@@ -1,41 +1,32 @@
-package org.example.tennis.entity;
+package org.example.tennis.dto;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.Type;
+import org.example.tennis.entity.Match;
 
-@Entity
-@Table(name = "score_vainqueur")
-public class Score {
+public class ScoreFullDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "SET_1")
     private Byte set1;
-
-    @Column(name = "SET_2")
     private Byte set2;
-
-    @Column(name = "SET_3")
     private Byte set3;
-
-    @Column(name = "SET_4")
     private Byte set4;
-
-    @Column(name = "SET_5")
     private Byte set5;
+    private MatchDto matchDto;
 
-    @OneToOne
-    @JoinColumn(name = "ID_MATCH")
-    private Match match;
+    public MatchDto getMatch() {
+        return matchDto;
+    }
 
-    public Match getMatch() {
-        return match;
+    public MatchDto getMatchDto() {
+        return matchDto;
+    }
+
+    public void setMatchDto(MatchDto matchDto) {
+        this.matchDto = matchDto;
     }
 
     public void setMatch(Match match) {
-        this.match = match;
+        this.matchDto = matchDto;
     }
 
     public Long getId() {
