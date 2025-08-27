@@ -49,6 +49,7 @@ public class ScoresServices {
             tournoiDto.setId(score.getMatch().getEpreuve().getTournoi().getId());
             tournoiDto.setCode(score.getMatch().getEpreuve().getTournoi().getCode());
             tournoiDto.setNom(score.getMatch().getEpreuve().getTournoi().getNom());
+            epreuvesFullDto.setTournoiDto(tournoiDto);
 
             matchDto.setEpreuvesFullDto(epreuvesFullDto);
 

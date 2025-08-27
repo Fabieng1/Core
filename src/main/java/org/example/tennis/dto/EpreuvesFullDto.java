@@ -2,6 +2,8 @@ package org.example.tennis.dto;
 
 import org.example.tennis.entity.Tournoi;
 
+import java.util.Set;
+
 public class EpreuvesFullDto {
 
     private Long id;
@@ -11,8 +13,17 @@ public class EpreuvesFullDto {
 
     private Character typeEpreuve;
 
+    private Set<JoueursDto> participantsDto;
     public Character getTypeEpreuve() {
         return typeEpreuve;
+    }
+
+    public Set<JoueursDto> getParticipantsDto() {
+        return participantsDto;
+    }
+
+    public void setParticipantsDto(Set<JoueursDto> participantsDto) {
+        this.participantsDto = participantsDto;
     }
 
     public void setTypeEpreuve(Character typeEpreuve) {

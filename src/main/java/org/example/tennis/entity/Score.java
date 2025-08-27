@@ -26,7 +26,7 @@ public class Score {
     @Column(name = "SET_5")
     private Byte set5;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ID_MATCH")
     private Match match;
 

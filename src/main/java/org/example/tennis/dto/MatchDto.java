@@ -11,6 +11,15 @@ public class MatchDto {
     private JoueursDto vainqueur;
     private JoueursDto finaliste;
     private EpreuvesFullDto epreuvesFullDto;
+    private ScoreFullDto scoreFullDto;
+
+    public ScoreFullDto getScoreFullDto() {
+        return scoreFullDto;
+    }
+
+    public void setScoreFullDto(ScoreFullDto scoreFullDto) {
+        this.scoreFullDto = scoreFullDto;
+    }
 
     public EpreuvesFullDto getEpreuvesFullDto() {
         return epreuvesFullDto;

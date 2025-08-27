@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.Type;
 
+import java.util.Set;
+
 @Entity
 public class Epreuve {
 
@@ -12,12 +14,33 @@ public class Epreuve {
     private Long id;
     private Short annee;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ID_TOURNOI")
     private Tournoi tournoi;
 
     @Column(name = "TYPE_EPREUVE")
     private Character typeEpreuve;
+
+
+    @ManyToMany
+    @JoinTable(
+            name = "PARTICIPANTS",
+            joinColumns = {
+                    @JoinColumn (name = "ID_EPREUVE")
+            },
+            inverseJoinColumns = {
+                    @JoinColumn(name = "ID_JOUEUR")
+            }
+    )
+    private Set<Joueur> participants;
+
+    public Set<Joueur> getParticipants() {
+        return  participants;
+    }
+
+    public void setParticipants(Set<Joueur> participants) {
+        this.participants = participants;
+    }
 
     public Character getTypeEpreuve() {
         return typeEpreuve;
