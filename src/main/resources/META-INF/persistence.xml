@@ -15,8 +15,8 @@
             <!-- Configuring JDBC properties -->
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver" />
             <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/tennis?useSSL=false" />
-            <property name="javax.persistence.jdbc.user" value="COURSDB" />
-            <property name="javax.persistence.jdbc.password" value="COURSDB" />
+            <property name="javax.persistence.jdbc.user" value="root" />
+            <property name="javax.persistence.jdbc.password" value="F@bien" />
 
             <!-- Hibernate properties -->
             <property name="hibernate.show_sql" value="true" />
@@ -25,10 +25,6 @@
 
             <!-- Configuring Connection Pool -->
             <property name="hibernate.dbcp.initialSize" value="5" />
-
-            <!-- Set the cache provider -->
-            <property name="hibernate.cache.provider_class" value="org.hibernate.cache.NoCacheProvider"/>
-
 
         </properties>
 

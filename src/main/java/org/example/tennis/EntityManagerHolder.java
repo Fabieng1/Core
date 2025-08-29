@@ -1,11 +1,11 @@
-package org.example.tennis;
+package com.mycompany.tennis;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-public class EntityManagerHolder {
 
+public class EntityManagerHolder {
     private static final ThreadLocal<EntityManager> entityManagerThreadLocal = new ThreadLocal<>();
     private static EntityManagerFactory entityManagerFactory = buildEntityManagerFactory();
 
@@ -33,5 +33,5 @@ public class EntityManagerHolder {
         return entityManager;
     }
 
-}
+
 }
