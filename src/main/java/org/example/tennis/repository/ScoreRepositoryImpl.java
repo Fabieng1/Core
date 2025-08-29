@@ -3,6 +3,7 @@ package org.example.tennis.repository;
 import org.example.tennis.DataSourceProvider;
 import org.example.tennis.HibernateUtil;
 import org.example.tennis.entity.Joueur;
+import org.example.tennis.entity.Match;
 import org.example.tennis.entity.Score;
 import org.hibernate.Session;
 
@@ -92,4 +93,13 @@ public class ScoreRepositoryImpl {
 
         return score;
     }
+    public void delete(Long id) {
+
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        Score score = session.get(Score.class, id);
+        session.delete(score);
+
+        System.out.println("Score supprimé !");
+    }
+
 }

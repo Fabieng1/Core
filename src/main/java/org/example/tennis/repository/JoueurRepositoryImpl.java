@@ -7,6 +7,7 @@ import org.example.tennis.entity.Joueur;
 import org.example.tennis.entity.Tournoi;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -62,59 +63,19 @@ public class JoueurRepositoryImpl {
         return joueur;
     }
 
-public List<Joueur> listPlayer() {
+    public List<Joueur> listPlayer(char sexe) {
 
-    Connection conn = null;
-    List<Joueur> listJoueurs = new ArrayList<>();
+        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
 
-    try {
+        Query<Joueur> query = session.createNamedQuery("given_sexe", Joueur.class);
+        query.setParameter(1, sexe);
 
-        DataSource dataSource = DataSourceProvider.getSingleDataSourceInstance();
-        conn = dataSource.getConnection();
+        List<Joueur> joueurs = query.getResultList();
 
-        conn.setAutoCommit(false);
+        System.out.println("Joueurs lu !");
 
-        PreparedStatement preparedStatement = conn.prepareStatement("SELECT ID, PRENOM, NOM, SEXE FROM JOUEUR");
-
-        ResultSet rs = preparedStatement.executeQuery();
-
-        while (rs.next()) {
-
-            Joueur joueur = new Joueur();
-
-            joueur.setId(rs.getLong("ID"));
-            joueur.setPrenom(rs.getString("PRENOM"));
-            joueur.setNom(rs.getString("NOM"));
-            joueur.setSexe(rs.getString("SEXE").charAt(0));
-            listJoueurs.add(joueur);
-        }
-
-        conn.commit();
-
-        Statement statement = conn.createStatement();
-
-        System.out.println("Joueurs lus ! !");
-
-    } catch (SQLException e) {
-        e.printStackTrace();
-        try {
-            if (conn != null) {
-                conn.rollback();
-            }
-        } catch (SQLException ex) {
-            throw new RuntimeException(ex);
-        }
-    } finally {
-        try {
-            if (conn != null) {
-                conn.close();
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-
-        return listJoueurs;
+        return joueurs;
     }
-}
+
+
 }
