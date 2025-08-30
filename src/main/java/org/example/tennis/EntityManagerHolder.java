@@ -13,7 +13,7 @@ public class EntityManagerHolder {
         return Persistence.createEntityManagerFactory("tennis-unit");
     }
 
-    public EntityManagerHolder(){
+    private EntityManagerHolder(){
 
     }
 
