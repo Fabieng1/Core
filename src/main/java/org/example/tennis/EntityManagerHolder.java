@@ -1,4 +1,4 @@
-package com.mycompany.tennis;
+package org.example.tennis;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -13,7 +13,7 @@ public class EntityManagerHolder {
         return Persistence.createEntityManagerFactory("tennis-unit");
     }
 
-    private EntityManagerHolder(){
+    public EntityManagerHolder(){
 
     }
 

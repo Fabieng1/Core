@@ -1,6 +1,7 @@
 package org.example.tennis.services;
 
 import jakarta.persistence.EntityManager;
+import org.example.tennis.EntityManagerHolder;
 import org.example.tennis.HibernateUtil;
 import org.example.tennis.dto.TournoiDto;
 import org.example.tennis.entity.Joueur;
@@ -8,7 +9,8 @@ import org.example.tennis.entity.Tournoi;
 import org.example.tennis.repository.TournoiRepositoryImpl;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import com.mycompany.tennis.EntityManagerHolder;
+import jakarta.persistence.EntityManager;
+
 
 public class TournoisServices {
 
@@ -29,8 +31,8 @@ public class TournoisServices {
         try {
 
             //session = HibernateUtil.getSessionFactory().getCurrentSession();
-            em = new EntityManagerHolder().getCurrentEntityManager();
-
+            em = new EntityManagerHolder.getCurrentEntityManager();
+            tx = em.getTransaction();
             //tx = session.beginTransaction();
             tournoi = tournoiRepository.getById(id);
             tournoiDto = new TournoiDto();
