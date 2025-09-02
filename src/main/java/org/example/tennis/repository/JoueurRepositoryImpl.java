@@ -1,17 +1,14 @@
 package org.example.tennis.repository;
 
-import org.apache.commons.dbcp2.BasicDataSource;
-import org.example.tennis.DataSourceProvider;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import org.example.tennis.EntityManagerHolder;
 import org.example.tennis.HibernateUtil;
 import org.example.tennis.entity.Joueur;
-import org.example.tennis.entity.Tournoi;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
-import javax.sql.DataSource;
-import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class JoueurRepositoryImpl {
@@ -65,9 +62,9 @@ public class JoueurRepositoryImpl {
 
     public List<Joueur> listPlayer(char sexe) {
 
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        EntityManager em = EntityManagerHolder.getCurrentEntityManager();
 
-        Query<Joueur> query = session.createNamedQuery("given_sexe", Joueur.class);
+        TypedQuery<Joueur> query = em.createNamedQuery("given_sexe", Joueur.class);
         query.setParameter(1, sexe);
 
         List<Joueur> joueurs = query.getResultList();
@@ -76,6 +73,7 @@ public class JoueurRepositoryImpl {
 
         return joueurs;
     }
+
 
 
 }

@@ -1,19 +1,27 @@
 package org.example.tennis;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import org.example.tennis.entity.Joueur;
+import org.example.tennis.repository.JoueurRepositoryImpl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class EntityManagerHolder {
     private static final ThreadLocal<EntityManager> entityManagerThreadLocal = new ThreadLocal<>();
     private static EntityManagerFactory entityManagerFactory = buildEntityManagerFactory();
 
-    private static EntityManagerFactory buildEntityManagerFactory(){
+    private static EntityManagerFactory buildEntityManagerFactory() {
         return Persistence.createEntityManagerFactory("tennis-unit");
     }
 
-    private EntityManagerHolder(){
+
+    private EntityManagerHolder() {
 
     }
 
@@ -33,5 +41,26 @@ public class EntityManagerHolder {
         return entityManager;
     }
 
+    public static Map<String, List<Joueur>> getAll() {
+        EntityManager em = null;
+        Map<String, List<Joueur>> result = new HashMap<>();
+
+        try {
+            em = EntityManagerHolder.getCurrentEntityManager();
+            JoueurRepositoryImpl repo = new JoueurRepositoryImpl();
+
+            List<Joueur> hommes = repo.listPlayer('H');
+            List<Joueur> femmes = repo.listPlayer('F');
+
+            // on regroupe dans une Map (clé = "hommes"/"femmes")
+            result.put("hommes", hommes);
+            result.put("femmes", femmes);
+
+        } finally {
+            em.close(); // fermeture unique
+        }
+
+        return result;
+    }
 
 }

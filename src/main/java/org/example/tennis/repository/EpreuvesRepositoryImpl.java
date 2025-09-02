@@ -1,11 +1,9 @@
 package org.example.tennis.repository;
 
-import org.example.tennis.HibernateUtil;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import org.example.tennis.EntityManagerHolder;
 import org.example.tennis.entity.Epreuve;
-import org.example.tennis.entity.Joueur;
-import org.example.tennis.entity.Tournoi;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 
 import java.util.List;
 
@@ -13,8 +11,8 @@ public class EpreuvesRepositoryImpl {
 
     public Epreuve getById (Long id) {
 
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Epreuve epreuve = session.get(Epreuve.class, id);
+        EntityManager em = EntityManagerHolder.getCurrentEntityManager();
+        Epreuve epreuve = em.find(Epreuve.class, id);
         System.out.println("Epreuve lu !");
 
         return epreuve;
@@ -22,9 +20,9 @@ public class EpreuvesRepositoryImpl {
 
     public List<Epreuve> listPlayer(String codeTournoi) {
 
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        EntityManager em = EntityManagerHolder.getCurrentEntityManager();
 
-        Query<Epreuve> query = session.createQuery("select e from Epreuve e join fetch e.tournoi where e.tournoi.code = ?1", Epreuve.class);
+        TypedQuery<Epreuve> query = em.createQuery("select e from Epreuve e join fetch e.tournoi where e.tournoi.code = ?1", Epreuve.class);
         query.setParameter(1, codeTournoi);
 
         List<Epreuve> epreuves = query.getResultList();

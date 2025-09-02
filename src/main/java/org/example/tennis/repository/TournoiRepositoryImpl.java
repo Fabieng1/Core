@@ -1,14 +1,13 @@
 package org.example.tennis.repository;
 
 import org.example.tennis.DataSourceProvider;
+import org.example.tennis.EntityManagerHolder;
 import org.example.tennis.HibernateUtil;
-import org.example.tennis.entity.Epreuve;
-import org.example.tennis.entity.Joueur;
 import org.example.tennis.entity.Tournoi;
-import org.example.tennis.services.TournoisServices;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import jakarta.persistence.*;
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
@@ -18,33 +17,15 @@ public class TournoiRepositoryImpl {
 
     private TournoiRepositoryImpl tournoiRepository;
 
-    public Tournoi createTournoi (Tournoi tournoi) {
+    public void createTournoi (Tournoi tournoi) {
 
-        Session session = null;
-        Transaction tx = null;
 
-        try {
+        EntityManager em = EntityManagerHolder.getCurrentEntityManager();
+        //session = HibernateUtil.getSessionFactory().openSession();
+        em.persist(tournoi);
 
-            session = HibernateUtil.getSessionFactory().openSession();
-            tx = session.beginTransaction();
-            session.persist(tournoi);
-            tx.commit();
-
-            System.out.println("Tournoi créé !");
-
-        } catch (Throwable t) {
-            if (tx != null) {
-                tx.rollback();
-            }
-            t.printStackTrace();
-        } finally {
-            if (session != null) {
-                session.close();
-            }
-        }
-        return tournoi;
+        System.out.println("Tournoi créé !");
     }
-
     public void updatePlayer (Tournoi tournoi) {
 
         Connection conn = null;
@@ -95,15 +76,16 @@ public class TournoiRepositoryImpl {
         Tournoi tournoi = new Tournoi();
         tournoi.setId(id);
 
-        Session session = HibernateUtil.getSessionFactory().getCurrentSession();
-
-        session.delete(tournoi);
+        //Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+        EntityManager em = EntityManagerHolder.getCurrentEntityManager();
+        em.remove(tournoi);
     }
 
     public Tournoi getById (Long id) {
 
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Tournoi tournoi = session.get(Tournoi.class, id);
+        EntityManager em = EntityManagerHolder.getCurrentEntityManager();
+        //Session session = HibernateUtil.getSessionFactory().openSession();
+        Tournoi tournoi = em.find(Tournoi.class, id);
         System.out.println("Tournoi lu !");
 
         return tournoi;

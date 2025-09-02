@@ -2,23 +2,17 @@ package org.example.tennis.services;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
-import org.example.tennis.DataSourceProvider;
+import org.example.tennis.EntityManagerHolder;
 import org.example.tennis.HibernateUtil;
 import org.example.tennis.dto.JoueursDto;
 import org.example.tennis.entity.Joueur;
 import org.example.tennis.repository.JoueurRepositoryImpl;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
 
-import javax.sql.DataSource;
-import javax.swing.text.html.parser.Entity;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class JoueursServices {
 
@@ -36,8 +30,9 @@ public class JoueursServices {
 
     public List<JoueursDto> getListeJoueurs(char sexe) {
 
-        Session session = null;
-        Transaction tx = null;
+        Map em = null;
+        EntityTransaction tx = null;
+
         List<JoueursDto> joueursDtoList = new ArrayList<>();
 
 
@@ -45,8 +40,10 @@ public class JoueursServices {
 
             EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("tennis-unit");
 
-            session = HibernateUtil.getSessionFactory().getCurrentSession();
-            tx = session.beginTransaction();
+            em = EntityManagerHolder.getAll();
+            tx = em.getTransaction();
+            tx.begin();
+
             List<Joueur> joueurList =  joueurRepository.listPlayer(sexe);
 
 
@@ -58,17 +55,19 @@ public class JoueursServices {
                 joueursDto.setNom(joueur.getNom());
                 joueursDto.setSexe(joueur.getSexe());
                 joueursDtoList.add(joueursDto);
-            }
 
+
+            }
             tx.commit();
+
         } catch (Exception e) {
             if (tx != null) {
                 tx.rollback();
             }
             e.printStackTrace();
         } finally {
-            if (session != null) {
-                session.close();
+            if (em != null) {
+                em.close();
             }
         }
 
@@ -77,14 +76,16 @@ public class JoueursServices {
 
     public Joueur getPlayer(Long id) {
 
-        Session session = null;
-        Transaction tx = null;
+        EntityManager em = null;
+        EntityTransaction tx = null;
         Joueur joueur = null;
 
         try {
 
-            session = HibernateUtil.getSessionFactory().getCurrentSession();
-            tx = session.beginTransaction();
+            em = EntityManagerHolder.getCurrentEntityManager();
+            tx = em.getTransaction();
+            tx.begin();
+
             joueur = joueurRepository.getById(id);
             tx.commit();
         } catch (Exception e) {
@@ -93,8 +94,8 @@ public class JoueursServices {
             }
             e.printStackTrace();
         } finally {
-            if (session != null) {
-                session.close();
+            if (em != null) {
+                em.close();
             }
         }
 
@@ -105,23 +106,25 @@ public class JoueursServices {
 
         Joueur joueur = getPlayer(id);
 
-        Session session = null;
-        Transaction tx = null;
+        EntityManager em = null;
+        EntityTransaction tx = null;
 
         try {
 
-            session = HibernateUtil.getSessionFactory().getCurrentSession();
-            tx = session.beginTransaction();
+            em = EntityManagerHolder.getCurrentEntityManager();
+            tx = em.getTransaction();
+            tx.begin();
+
             joueur.setNom(newName);
-            Joueur joueur2 = (Joueur) session.merge(joueur);
+            Joueur joueur2 = (Joueur) em.merge(joueur);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) {
                 tx.rollback();
             }
         } finally {
-            if (session != null) {
-                session.close();
+            if (em != null) {
+                em.close();
             }
         }
     }
@@ -130,36 +133,40 @@ public class JoueursServices {
 
         Joueur joueur = getPlayer(id);
 
-        Session session = null;
-        Transaction tx = null;
+        EntityManager em = null;
+        EntityTransaction tx = null;
 
         try {
 
-            session = HibernateUtil.getSessionFactory().getCurrentSession();
-            tx = session.beginTransaction();
+            em = EntityManagerHolder.getCurrentEntityManager();
+            tx = em.getTransaction();
+            tx.begin();
+
             joueur.setSexe(newSex);
-            Joueur joueur2 = (Joueur) session.merge(joueur);
+            Joueur joueur2 = (Joueur) em.merge(joueur);
             tx.commit();
         } catch (Exception e) {
             if (tx != null) {
                 tx.rollback();
             }
         } finally {
-            if (session != null) {
-                session.close();
+            if (em != null) {
+                em.close();
             }
         }
     }
 
     public void deletePlayer(Long id) {
 
-        Session session = null;
-        Transaction tx = null;
+        EntityManager em = null;
+        EntityTransaction tx = null;
 
         try {
 
-            session = HibernateUtil.getSessionFactory().getCurrentSession();
-            tx = session.beginTransaction();
+            em = EntityManagerHolder.getCurrentEntityManager();
+            tx = em.getTransaction();
+            tx.begin();
+
             joueurRepository.delete(id);
             tx.commit();
         } catch (Exception e) {
@@ -167,8 +174,8 @@ public class JoueursServices {
                 tx.rollback();
             }
         } finally {
-            if (session != null) {
-                session.close();
+            if (em != null) {
+                em.close();
             }
         }
     }

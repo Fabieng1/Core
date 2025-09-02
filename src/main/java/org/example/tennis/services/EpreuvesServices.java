@@ -1,5 +1,8 @@
 package org.example.tennis.services;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import org.example.tennis.EntityManagerHolder;
 import org.example.tennis.HibernateUtil;
 import org.example.tennis.dto.EpreuvesFullDto;
 import org.example.tennis.dto.EpreuvesLightDto;
@@ -110,15 +113,19 @@ public class EpreuvesServices {
 
     public List<EpreuvesFullDto> getListeJoueurs(String codeTournoi) {
 
-        Session session = null;
-        Transaction tx = null;
+        EntityManager em = null;
+        EntityTransaction tx = null;
+
+
         List<EpreuvesFullDto> epreuvesFullDto = new ArrayList<>();
 
 
         try {
 
-            session = HibernateUtil.getSessionFactory().getCurrentSession();
-            tx = session.beginTransaction();
+            em = EntityManagerHolder.getCurrentEntityManager();
+            tx = em.getTransaction();
+            tx.begin();
+
             List<Epreuve> epreuves =  epreuvesRepository.listPlayer(codeTournoi);
 
 
@@ -145,8 +152,8 @@ public class EpreuvesServices {
             }
             e.printStackTrace();
         } finally {
-            if (session != null) {
-                session.close();
+            if (em != null) {
+                em.close();
             }
         }
 
