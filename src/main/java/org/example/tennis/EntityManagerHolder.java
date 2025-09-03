@@ -3,6 +3,7 @@ package org.example.tennis;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 import org.example.tennis.entity.Joueur;
 import org.example.tennis.repository.JoueurRepositoryImpl;
@@ -43,31 +44,36 @@ public class EntityManagerHolder {
     }
 
     public static Map<String, List<Joueur>> getAll() {
-        EntityManager em = null;
+        EntityManager em = getCurrentEntityManager();
         Map<String, List<Joueur>> result = new HashMap<>();
-        Transaction tx = null;
-        tx.begin();
+        EntityTransaction tx = em.getTransaction();
 
         try {
-            em = EntityManagerHolder.getCurrentEntityManager();
-            JoueurRepositoryImpl repo = new JoueurRepositoryImpl();
+            tx.begin();
 
+            JoueurRepositoryImpl repo = new JoueurRepositoryImpl();
             List<Joueur> hommes = repo.listPlayer('H');
             List<Joueur> femmes = repo.listPlayer('F');
 
-            // on regroupe dans une Map (clé = "hommes"/"femmes")
+            tx.commit();
+
             result.put("hommes", hommes);
             result.put("femmes", femmes);
 
-        }  catch (Exception e) {
-            if (tx != null) {
+        } catch (Exception e) {
+            if (tx.isActive()) {
                 tx.rollback();
             }
-        }finally {
-            em.close(); // fermeture unique
+            throw e; // pour voir l'erreur dans les logs
+        } finally {
+            if (em.isOpen()) {
+                em.close();
+                entityManagerThreadLocal.remove(); // éviter de réutiliser un EM fermé
+            }
         }
 
         return result;
     }
+
 
 }
