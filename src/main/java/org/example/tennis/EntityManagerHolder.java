@@ -6,6 +6,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import org.example.tennis.entity.Joueur;
 import org.example.tennis.repository.JoueurRepositoryImpl;
+import org.hibernate.Transaction;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,6 +45,8 @@ public class EntityManagerHolder {
     public static Map<String, List<Joueur>> getAll() {
         EntityManager em = null;
         Map<String, List<Joueur>> result = new HashMap<>();
+        Transaction tx = null;
+        tx.begin();
 
         try {
             em = EntityManagerHolder.getCurrentEntityManager();
@@ -56,7 +59,11 @@ public class EntityManagerHolder {
             result.put("hommes", hommes);
             result.put("femmes", femmes);
 
-        } finally {
+        }  catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+        }finally {
             em.close(); // fermeture unique
         }
 

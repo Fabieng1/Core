@@ -36,40 +36,25 @@ public class JoueursServices {
         List<JoueursDto> joueursDtoList = new ArrayList<>();
 
 
-        try {
+        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("tennis-unit");
 
-            EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("tennis-unit");
-
-            em = EntityManagerHolder.getAll();
-            tx = em.getTransaction();
-            tx.begin();
-
-            List<Joueur> joueurList =  joueurRepository.listPlayer(sexe);
+        em = EntityManagerHolder.getAll();
+        List<Joueur> joueurList = joueurRepository.listPlayer(sexe);
 
 
-            for (Joueur joueur : joueurList) {
+        for (Joueur joueur : joueurList) {
 
-                final JoueursDto joueursDto = new JoueursDto();
-                joueursDto.setId(joueur.getId());
-                joueursDto.setPrenom(joueur.getPrenom());
-                joueursDto.setNom(joueur.getNom());
-                joueursDto.setSexe(joueur.getSexe());
-                joueursDtoList.add(joueursDto);
+            final JoueursDto joueursDto = new JoueursDto();
+            joueursDto.setId(joueur.getId());
+            joueursDto.setPrenom(joueur.getPrenom());
+            joueursDto.setNom(joueur.getNom());
+            joueursDto.setSexe(joueur.getSexe());
+            joueursDtoList.add(joueursDto);
 
 
-            }
-            tx.commit();
-
-        } catch (Exception e) {
-            if (tx != null) {
-                tx.rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            if (em != null) {
-                em.close();
-            }
         }
+        tx.commit();
+
 
         return joueursDtoList;
     }
@@ -169,14 +154,12 @@ public class JoueursServices {
 
             joueurRepository.delete(id);
             tx.commit();
-        } catch (Exception e) {
-            if (tx != null) {
-                tx.rollback();
-            }
-        } finally {
+        }
+        finally{
             if (em != null) {
                 em.close();
             }
         }
     }
+
 }
