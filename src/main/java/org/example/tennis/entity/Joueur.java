@@ -3,8 +3,10 @@ package org.example.tennis.entity;
 import jakarta.persistence.*;
 
 import java.util.Objects;
-@NamedQuery(query = "select j from Joueur j where j.sexe = ?1", name = "given_sexe")
-@NamedQuery(query = "select j from Joueur j where j.nom = ?1", name = "given_nom")
+@NamedQueries({
+        @NamedQuery(name = "given_sexe", query = "SELECT j FROM Joueur j WHERE j.sexe = ?1"),
+        @NamedQuery(name = "given_nom", query = "SELECT j FROM Joueur j WHERE j.nom = ?1")
+})
 @Entity
 
 public class Joueur {
