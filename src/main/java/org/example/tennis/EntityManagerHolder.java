@@ -1,79 +1,81 @@
 package org.example.tennis;
 
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Persistence;
 import org.example.tennis.entity.Joueur;
 import org.example.tennis.repository.JoueurRepositoryImpl;
-import org.hibernate.Transaction;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Gestionnaire centralisé d'EntityManager pour l'application.
+ */
 public class EntityManagerHolder {
+
     private static final ThreadLocal<EntityManager> entityManagerThreadLocal = new ThreadLocal<>();
-    private static EntityManagerFactory entityManagerFactory = buildEntityManagerFactory();
+    private static final EntityManagerFactory entityManagerFactory = buildEntityManagerFactory();
+
+    private EntityManagerHolder() { }
 
     private static EntityManagerFactory buildEntityManagerFactory() {
         return Persistence.createEntityManagerFactory("tennis-unit");
     }
 
+    /**
+     * @return l'EntityManager lié au thread courant
+     */
+    public static EntityManager getCurrentEntityManager() {
+        EntityManager em = entityManagerThreadLocal.get();
 
-    private EntityManagerHolder() {
+        if (em == null || !em.isOpen()) {
+            em = entityManagerFactory.createEntityManager();
+            entityManagerThreadLocal.set(em);
+        }
 
+        return em;
     }
 
     /**
-     * @return The {@link EntityManager} linked to this thread
+     * Ferme l'EntityManager du thread courant si ouvert.
      */
-    public static EntityManager getCurrentEntityManager() {
-        EntityManager entityManager = entityManagerThreadLocal.get();
-
-        if (entityManager == null) {
-
-            // Start the conversation by creating the EntityManager for this thread
-            entityManager = entityManagerFactory.createEntityManager();
-            entityManagerThreadLocal.set(entityManager);
-
+    public static void closeCurrentEntityManager() {
+        EntityManager em = entityManagerThreadLocal.get();
+        if (em != null && em.isOpen()) {
+            em.close();
         }
-        return entityManager;
+        entityManagerThreadLocal.remove();
     }
 
+    /**
+     * Récupère tous les joueurs hommes et femmes.
+     * @return Map avec clés "hommes" et "femmes"
+     */
     public static Map<String, List<Joueur>> getAll() {
-        EntityManager em = getCurrentEntityManager();
         Map<String, List<Joueur>> result = new HashMap<>();
+        EntityManager em = getCurrentEntityManager();
         EntityTransaction tx = em.getTransaction();
 
         try {
             tx.begin();
 
             JoueurRepositoryImpl repo = new JoueurRepositoryImpl();
-            List<Joueur> hommes = repo.listPlayer('H');
-            List<Joueur> femmes = repo.listPlayer('F');
+            result.put("hommes", repo.listPlayer('H'));
+            result.put("femmes", repo.listPlayer('F'));
 
             tx.commit();
-
-            result.put("hommes", hommes);
-            result.put("femmes", femmes);
-
         } catch (Exception e) {
             if (tx.isActive()) {
                 tx.rollback();
             }
-            throw e; // pour voir l'erreur dans les logs
+            throw e;
         } finally {
-            if (em.isOpen()) {
-                em.close();
-                entityManagerThreadLocal.remove(); // éviter de réutiliser un EM fermé
-            }
+            closeCurrentEntityManager(); // Toujours fermer l'EM après usage
         }
 
         return result;
     }
-
-
 }

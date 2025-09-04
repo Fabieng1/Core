@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 
 import java.util.Objects;
 @NamedQuery(query = "select j from Joueur j where j.sexe = ?1", name = "given_sexe")
-@NamedQuery(query = "select j from Joueur j where j.sexe = ?1", name = "given_nom")
+@NamedQuery(query = "select j from Joueur j where j.nom = ?1", name = "given_nom")
 @Entity
 
 public class Joueur {
